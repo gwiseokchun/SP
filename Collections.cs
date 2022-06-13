@@ -34,7 +34,7 @@ namespace LGCNS.ezControl.Common
         /// Sort with a comparer for objects of arbitrary types having using the specified properties
         /// </summary>
         /// <param name="strFields">Properties to sort objects by</param>
-        /// <param name="bStringToInt">ï¿½ñ±³½ï¿½ string ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½Ì¸ï¿½ Int ï¿½ï¿½ï¿½Â·ï¿½ Sort</param>
+        /// <param name="bStringToInt">ºñ±³½Ã string ÀÌ ¼ýÀÚ Å¸ÀÔÀÌ¸é Int ÇüÅÂ·Î Sort</param>
         public void Sort(string[] strFields, bool bStringToInt)
         {
             this.Sort(new ObjectComparer<T>(strFields, bStringToInt));
@@ -58,7 +58,7 @@ namespace LGCNS.ezControl.Common
         /// </summary>
         /// <param name="strFields">Properties to sort objects by</param>
         /// <param name="bIsDescending">Properties to sort in descending order</param>
-        /// <param name="bStringToInt">ï¿½ñ±³½ï¿½ string ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½Ì¸ï¿½ Int ï¿½ï¿½ï¿½Â·ï¿½ Sort</param>
+        /// <param name="bStringToInt">ºñ±³½Ã string ÀÌ ¼ýÀÚ Å¸ÀÔÀÌ¸é Int ÇüÅÂ·Î Sort</param>
         /// <returns></returns>
         public int Sort(string[] strFields, bool[] bIsDescending, bool bStringToInt)
         {
@@ -107,8 +107,8 @@ namespace LGCNS.ezControl.Common
         }
 
         /// <summary>
-        /// ï¿½âº»ï¿½ï¿½ ï¿½Ø´ï¿½ Feild ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Value ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Í¸ï¿½ Ã£ï¿½ï¿½.
-        /// bNot ï¿½ï¿½ true ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ Field ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ value ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½.
+        /// ±âº»Àº ÇØ´ç Feild ÀÇ °ªÀÌ Value ¿Í µ¿ÀÏÇÑ °Í¸¸ Ã£À½.
+        /// bNot ÀÌ true ÀÎ °æ¿ì´Â ÇØ´ç Field ÀÇ °ªÀÌ value ¿Í ´Ù¸¥ °ÍÀ» ¸ðµÎ Ã£À½.
         /// </summary>
         /// <param name="strFields"></param>
         /// <param name="values"></param>
@@ -141,7 +141,7 @@ namespace LGCNS.ezControl.Common
         }
 
         /// <summary>
-        /// Field == value1 or value2 or ....value n  ï¿½Î°ï¿½ Ã£ï¿½ï¿½.
+        /// Field == value1 or value2 or ....value n  ÀÎ°Í Ã£±â.
         /// </summary>
         /// <param name="strField"></param>
         /// <param name="values"></param>
@@ -162,7 +162,7 @@ namespace LGCNS.ezControl.Common
             return listResult;
         }
         /// <summary>
-        /// Field != value1 AND value2 AND ....value n  ï¿½Î°ï¿½ Ã£ï¿½ï¿½.
+        /// Field != value1 AND value2 AND ....value n  ÀÎ°Í Ã£±â.
         /// </summary>
         /// <param name="strField"></param>
         /// <param name="values"></param>
@@ -369,7 +369,7 @@ namespace LGCNS.ezControl.Common
                 {
                     if (_bStringToInt)
                     {
-                        // string ï¿½ï¿½ï¿½Â¸ï¿½ int ï¿½ï¿½ ï¿½Ù²Ù¾ï¿½ compare
+                        // string ÇüÅÂ¸¦ int ·Î ¹Ù²Ù¾î compare
                         int iValx = 0;
                         int iValy = 0;
                         if (int.TryParse(pvalx.ToString(), out iValx) && int.TryParse(pvaly.ToString(), out iValy))
@@ -421,7 +421,7 @@ namespace LGCNS.ezControl.Common
         /// Create a comparer for objects of arbitrary types having using the specified properties
         /// </summary>
         /// <param name="fields">Properties to sort objects by</param>
-        /// <param name="bStringToInt">ï¿½ñ±³½ï¿½ string ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½Ì¸ï¿½ Int ï¿½ï¿½ï¿½Â·ï¿½ Sort</param>
+        /// <param name="bStringToInt">ºñ±³½Ã string ÀÌ ¼ýÀÚ Å¸ÀÔÀÌ¸é Int ÇüÅÂ·Î Sort</param>
         public ObjectComparer(string[] strFields, bool bStringToInt)
             : this(strFields, new bool[strFields.Length])
         {
@@ -443,7 +443,7 @@ namespace LGCNS.ezControl.Common
         /// </summary>
         /// <param name="strFields">Properties to sort objects by</param>
         /// <param name="bIsDescending">Properties to sort in descending order</param>
-        /// /// <param name="bStringToInt">ï¿½ñ±³½ï¿½ string ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½Ì¸ï¿½ Int ï¿½ï¿½ï¿½Â·ï¿½ Sort</param>
+        /// /// <param name="bStringToInt">ºñ±³½Ã string ÀÌ ¼ýÀÚ Å¸ÀÔÀÌ¸é Int ÇüÅÂ·Î Sort</param>
         public ObjectComparer(string[] strFields, bool[] bIsDescending, bool bStringToInt)
         {
             _strFieldList = strFields;
