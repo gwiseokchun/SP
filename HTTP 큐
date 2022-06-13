@@ -1,0 +1,260 @@
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            ConcurrentQueue <HttpListenerContext> msgQueue = new ConcurrentQueue <HttpListenerContext>();
+            Dictionary<string, Queue<string>> queueList = new Dictionary<string, Queue<string>>();
+            Dictionary<string, int> queueCnt = new Dictionary<string, int>();
+            byte[] data = null;
+            int cnt = 0;
+
+            HttpListener listener = new HttpListener();
+            listener.Prefixes.Add("http://127.0.0.1:8080/");
+            listener.Start();
+
+            while (true)
+            {
+//                msgQueue.Enqueue(listener.GetContext());
+
+                var context = listener.GetContext();
+                Console.WriteLine(string.Format("Request({0}) : {1}", context.Request.HttpMethod, context.Request.Url));
+                //DateTime dt = DateTime.Now;
+
+
+                String input = context.Request.Url.AbsolutePath;
+                String s = "";
+
+
+
+                if (context.Request.HttpMethod == "GET")
+                {
+                    ;
+                }
+                else if (context.Request.HttpMethod == "POST")
+                {
+                    //strRes = "(POST) " + dt.ToString();
+                    Stream body = context.Request.InputStream;
+                    Encoding encoding = context.Request.ContentEncoding;
+                    StreamReader reader = new System.IO.StreamReader(body, encoding);
+                    s = reader.ReadToEnd();
+
+                    if (s != null && s != "null")
+                    {
+                        JObject obj = JObject.Parse(s);
+                        if (obj.ContainsKey("QueueSize"))
+                        {
+                            cnt = Convert.ToInt32(obj["QueueSize"].ToString());
+                        }
+                    }
+                }
+
+
+                if (input != null && input != " ")
+                {
+                    char[] charSeparators = new char[] { '/' };
+                    String[] words = input.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
+                    String name = words[1];
+
+                    if (words[0] == "CREATE")
+                    {
+                        if (queueList.ContainsKey(name))
+                        {
+                            data = Encoding.UTF8.GetBytes(makeJsonResult("Queue Exist"));
+                            sendResult(context, data);
+                        }
+                        else
+                        {
+                            Queue<string> q1 = new Queue<string>(cnt);
+                            queueList.Add(name, q1);
+                            queueCnt.Add(name, Convert.ToInt32(cnt));
+
+                            data = Encoding.UTF8.GetBytes(makeJsonResult("Ok"));
+                            sendResult(context, data);
+                        }
+                    }
+                    else if (words[0] == "SEND")
+                    {
+                        if (queueList.Count == 0) return;
+                        if (!queueList.ContainsKey(name)) return;
+
+
+
+                        //메세지 저장
+                        //큐사이즈 체크
+                        if (queueCnt[name] == queueList[name].Count)
+                        {
+                            data = Encoding.UTF8.GetBytes(makeJsonResult("Queue Full"));
+                            sendResult(context, data);
+                        }
+                        else
+                        {
+                            JObject obj = JObject.Parse(s);
+                            if (obj.ContainsKey("Message"))
+                            {
+                                string msg = obj["Message"].ToString();
+                                queueList[name].Enqueue(msg);
+                            }
+
+                            data = Encoding.UTF8.GetBytes(makeJsonResult("Ok"));
+                            sendResult(context, data);
+                        }
+                    }
+                    else if (words[0] == "RECEIVE")
+                    {
+                        if (queueList[name].Count != 0)
+                        {
+                            string msg = queueList[name].Peek();
+
+
+                            if (queueList.ContainsKey(name + "BackUp"))
+                            {
+                                queueList[name + "BackUp"].Enqueue(msg);
+                            }
+                            else
+                            {
+                                Queue<string> q1 = new Queue<string>();
+                                queueList.Add(name + "BackUp", q1);
+                            }
+
+
+                            //char[] sp = new char[] { ' ' };
+                            //String[] id = msg.Split(sp, StringSplitOptions.RemoveEmptyEntries);
+
+                            string id = msg.Substring(msg.IndexOf('#'), msg.Length - msg.IndexOf('#'));
+
+                            data = Encoding.UTF8.GetBytes(makeJsonResultMessage("Ok", id, msg));
+                            sendResult(context, data);
+
+                            queueList[name].Dequeue();
+
+                        }
+                        else
+                        {
+                            data = Encoding.UTF8.GetBytes(makeJsonResult("No Message"));
+                            sendResult(context, data);
+                        }
+
+                    }else if (words[0] == "FAIL")
+                    {
+
+                        //queueList[name].Enqueue(queueList[name + "BackUp"]);
+
+                        data = Encoding.UTF8.GetBytes(makeJsonResult("Ok"));
+                        sendResult(context, data);
+
+                    }
+                    else if (words[0] == "ACK")
+                    {
+
+                        //queueList[name].Enqueue(queueList[name + "BackUp"]);
+
+                        data = Encoding.UTF8.GetBytes(makeJsonResult("Ok"));
+                        sendResult(context, data);
+
+                    }
+
+                }
+
+                //body.Close();
+                //reader.Close();
+
+                else
+                {
+
+                }
+
+                //data = Encoding.UTF8.GetBytes(strRes);
+                //context.Response.OutputStream.Write(data, 0, data.Length);
+                //context.Response.StatusCode = 200;
+                //context.Response.Close();
+            }
+        }
+
+        public static string makeJsonResult(String rlt)
+        {
+            JObject json = new JObject();
+            json["Result"] = rlt;
+            string jsonstr = json.ToString();
+
+            return jsonstr;
+        }
+
+        public static string makeJsonResultMessage(String rlt, string id, string msg)
+        {
+            JObject json = new JObject();
+            json["Result"] = rlt;
+            json["MessageID"] = id.ToString();
+            json["Message"] = msg;
+            string jsonstr = json.ToString();
+
+            return jsonstr;
+        }
+
+        public static void sendResult(HttpListenerContext context, byte[] data)
+        {
+            context.Response.OutputStream.Write(data, 0, data.Length);
+            context.Response.StatusCode = 200;
+            context.Response.Close();
+
+        }
+
+        public static void createQueue()
+        {
+
+            //Dictionary<string, Queue<string>> queueList = new Dictionary<string, Queue<string>>();
+            //Dictionary<string, int> queueCnt = new Dictionary<string, int>();
+
+            //while (true)
+            //{
+            //    string input = Console.ReadLine();
+
+            //    if (input != null && input != " ")
+            //    {
+            //        string[] words = input.Split(' ');
+            //        string name = words[1];
+
+            //        if (words[0] == "CREATE")
+            //        {
+            //            if (queueList.ContainsKey(name))
+            //            {
+            //                Console.WriteLine("Queue Exist");
+            //                continue;
+            //            }
+
+            //            int count = Convert.ToInt32(words[2]);
+
+            //            Queue<string> q1 = new Queue<string>(count);
+            //            queueList.Add(name, q1);
+            //            queueCnt.Add(name, count);
+            //        }
+            //        else
+            //        {
+            //            if (queueList.Count == 0) return;
+            //            if (!queueList.ContainsKey(name)) return;
+
+            //            if (words[0] == "SEND")
+            //            {
+            //                if (queueCnt[name] == queueList[name].Count)
+            //                {
+            //                    Console.WriteLine("Queue Full");
+            //                }
+            //                else
+            //                {
+            //                    queueList[name].Enqueue(words[2]);
+            //                }
+            //            }
+            //            else if (words[0] == "RECEIVE")
+            //            {
+            //                if (queueList[name].Count != 0)
+            //                {
+            //                    Console.WriteLine(queueList[name].Dequeue());
+            //                }
+            //            }
+            //        }
+
+            //    }
+
+            //}
+
+        }
+    }
