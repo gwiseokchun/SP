@@ -1,0 +1,18 @@
+
+File / Directory List 출력 참고 사이트
+https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.getfiles?redirectedfrom=MSDN&view=net-7.0#System_IO_Directory_GetFiles_System_String_
+
+Thread
+https://learn.microsoft.com/ko-kr/previous-versions/visualstudio/visual-studio-2008/7a2f3ay4(v=vs.90)?redirectedfrom=MSDN
+
+Thread 동기화 (Mutex 클래스)
+https://learn.microsoft.com/ko-kr/dotnet/api/system.threading.mutex?redirectedfrom=MSDN&view=net-7.0#code-snippet-1
+
+Encryption/Decryption
+https://learn.microsoft.com/ko-kr/dotnet/api/system.security.cryptography.sha256?redirectedfrom=MSDN&view=net-7.0#code-snippet-1
+(SHA 클래스-clr 옵션 필요)
+https://sourceforge.net/projects/hashlib2plus/?source=typ_redirect(소스)
+
+네트웍통신
+https://learn.microsoft.com/ko-kr/dotnet/fundamentals/networking/sockets/socket-services?redirectedfrom=MSDN#create-a-socket-client
+https://learn.microsoft.com/ko-kr/dotnet/fundamentals/networking/sockets/socket-services?redirectedfrom=MSDN#create-a-socket-server
